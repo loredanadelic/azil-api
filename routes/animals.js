@@ -8,10 +8,12 @@ import {
   postAnimal,
 } from "../controllers/animals.js";
 import { validateAnimalEdit, validateAnimalInput } from "../util/validation.js";
+import { isAuth } from "../middleware/is-auth.js";
 const router = express.Router();
 router.get("/", getAnimals);
 router.post(
   "/",
+  isAuth,
   bodyParser.json(),
   validateAnimalInput(),
   postAnimal

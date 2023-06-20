@@ -15,7 +15,7 @@ export const isValidUrl = (urlString) => {
 export const typeOfAnimal = (animal) => {
   if (
     animal !== "pas" &&
-    animal !== "mačka" &&
+    animal !== "macka" &&
     animal !== "zec" &&
     animal !== "ostalo"
   ) {
