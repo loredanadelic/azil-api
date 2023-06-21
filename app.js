@@ -1,6 +1,5 @@
 import express from "express";
 import bodyParser from "body-parser";
-import Sequelize from "sequelize";
 import * as dotenv from "dotenv";
 import sequelize from "./util/database.js";
 import animalRouter from "./routes/animals.js";
