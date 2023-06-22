@@ -19,21 +19,39 @@ export const postSignUp = async (req, res, next) => {
     next();
     return;
   }
+  const token = jwt.sign({ email: email }, "secret");
   console.log(name);
   const hashedPassword = bcrypt.hashSync(password);
   const user = await User.create({
     email: email,
     name: name,
     password: hashedPassword,
+    confirmationCode: token,
   });
+
   const info = await transporter.sendMail({
     from: process.env.EMAIL,
     to: email,
     subject: "Hello from azil comunity",
-    text: "You have successfully signed up for our website",
-    html: "You have successfully signed up for our website",
+    html: `
+    <p>Click this <a href="http://localhost:3000/signup/${token}">link</a> to activate your account.</p>
+  `,
   });
   res.status(200).json(user);
+};
+
+export const getSignup = async (req, res, next) => {
+  const user = await User.findOne({
+    confirmationCode: req.params.confirmationCode,
+  });
+  if (!user) {
+    return;
+  }
+  await User.update(
+    { status: "Active" },
+    { where: { confirmationCode: req.params.confirmationCode } }
+  );
+  res.status(200).json("Activated account");
 };
 
 export const postLoginIn = async (req, res, next) => {
@@ -41,6 +59,9 @@ export const postLoginIn = async (req, res, next) => {
   const user = await User.findOne({ where: { email: email } });
   if (!user) {
     return res.status(400).json("wrong email");
+  }
+  if (user.status === "Pending") {
+    return res.status(400).json("Email not confirmed");
   }
   const isCorrect = bcrypt.compareSync(password, user.password);
   if (!isCorrect) {
@@ -52,7 +73,6 @@ export const postLoginIn = async (req, res, next) => {
   console.log(token);
   res.status(200).json({ token: token, userId: user.id.toString() });
 };
-
 
 export const resetPass = async (req, res, next) => {
   const { email } = req.body;
