@@ -17,8 +17,16 @@ const User = sequelize.define("user", {
     allowNull: false,
   },
   password: {
-    type:Sequelize.STRING,
-    allowNull:false
-  }
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  resetToken: {
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
+  resetTokenExpiration: {
+    type: Sequelize.DATE,
+    allowNull: true,
+  },
 });
-export default User
+export default User;
